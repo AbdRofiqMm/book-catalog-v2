@@ -17,7 +17,7 @@ public class Category extends AbstractBaseEntity {
 
     @Id
     @Column(name = "code", nullable = false)
-    private Long code;
+    private String code;
 
     @Column(name = "name", nullable = false)
     private String name;
