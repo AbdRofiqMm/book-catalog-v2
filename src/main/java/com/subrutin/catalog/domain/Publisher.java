@@ -11,11 +11,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "publisher")
+@SQLDelete(sql = "UPDATE author SET deleted = true WHERE id = ? ")
+@Where(clause = "deleted=false")
 public class Publisher extends AbstractBaseEntity {
 
     @Id

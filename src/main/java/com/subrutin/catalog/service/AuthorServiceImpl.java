@@ -22,8 +22,8 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
 
     @Override
-    public AuthorResponseDto findAuthorById(long id) {
-        Author author = authorRepository.findById(id)
+    public AuthorResponseDto findAuthorById(String id) {
+        Author author = authorRepository.findBySecureId(id)
                 .orElseThrow(() -> new BadRequestExcepton("invalid.authorId"));
         AuthorResponseDto dto = new AuthorResponseDto();
         dto.setName(author.getName());
@@ -43,8 +43,8 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public void updateAuthor(Long authorId, AuthorUpdateRequestDto dto) {
-        Author author = authorRepository.findById(authorId)
+    public void updateAuthor(String authorId, AuthorUpdateRequestDto dto) {
+        Author author = authorRepository.findBySecureId(authorId)
                 .orElseThrow(() -> new BadRequestExcepton("invalid.authorId"));
         author.setName(dto.getAuthorName() == null ? author.getName() : dto.getAuthorName());
         author.setBirhtDate(
@@ -53,13 +53,25 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public void deleteAuthor(Long auhotrId) {
-        authorRepository.deleteById(auhotrId);
+    public void deleteAuthor(String auhotrId) {
+        Author author = authorRepository.findBySecureId(auhotrId)
+                .orElseThrow(() -> new BadRequestExcepton("invlid.authorId"));
+        authorRepository.delete(author);
+
+        // authorRepository.deleteById(auhotrId);
 
         // Author author = authorRepository.findByIdAndDeletedFalse(auhotrId)
         // .orElseThrow(() -> new BadRequestExcepton("invlid.authorId"));
         // author.setDeleted(Boolean.TRUE);
         // authorRepository.save(author);
+    }
+
+    @Override
+    public List<Author> findAuthors(List<String> authorIdList) {
+        List<Author> authors = authorRepository.findBySecureIdIn(authorIdList);
+        if (authors.isEmpty())
+            throw new BadRequestExcepton("Author cant empty");
+        return authors;
     }
 
 }

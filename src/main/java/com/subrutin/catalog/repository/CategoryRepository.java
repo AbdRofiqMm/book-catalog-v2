@@ -1,5 +1,6 @@
 package com.subrutin.catalog.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -14,4 +15,5 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
 
     public Page<Category> findByNameLikeIgnoreCase(String categoryName, Pageable pageable);
 
+    public List<Category> findByCodeIn(List<String> codes);
 }

@@ -5,8 +5,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.subrutin.catalog.domain.Author;
 import com.subrutin.catalog.domain.Book;
-import com.subrutin.catalog.dto.BookCreateDto;
+import com.subrutin.catalog.domain.Category;
+import com.subrutin.catalog.domain.Publisher;
+import com.subrutin.catalog.dto.BookCreateRequestDto;
 import com.subrutin.catalog.dto.BookDetailDto;
 import com.subrutin.catalog.dto.BookUpdateRequestDto;
 import com.subrutin.catalog.exception.BadRequestExcepton;
@@ -19,6 +22,12 @@ import lombok.AllArgsConstructor;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+
+    private final AuthorService authorService;
+
+    private final CategoryService categoryService;
+
+    private final PublisherService publisherService;
 
     @Override
     public BookDetailDto findBookDetailById(Long id) {
@@ -43,10 +52,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void createNewBook(BookCreateDto dto) {
+    public void createNewBook(BookCreateRequestDto dto) {
+        List<Author> authors = authorService.findAuthors(dto.getAuthorIdList());
+        List<Category> categories = categoryService.findCategories(dto.getCategoryList());
+        Publisher publisher = publisherService.findPublisher(dto.getPublisherId());
         Book book = new Book();
         book.setTitle(dto.getBookTitle());
-        book.setDescription(dto.getBookDescription());
+        book.setAuthors(authors);
+        book.setCategories(categories);
+        book.setPublisher(publisher);
+        book.setDescription(dto.getDescription());
         bookRepository.save(book);
     }
 
@@ -62,4 +77,5 @@ public class BookServiceImpl implements BookService {
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
+
 }

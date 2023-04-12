@@ -9,8 +9,12 @@ import com.subrutin.catalog.domain.Author;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {
 
+    public Optional<Author> findBySecureId(String id);
+
+    public List<Author> findBySecureIdIn(List<String> id);
+
     public List<Author> findByNameLike(String name);
 
-    public Optional<Author> findByIdAndDeletedFalse(Long id);
+    public Optional<Author> findByIdAndDeletedFalse(String id);
 
 }

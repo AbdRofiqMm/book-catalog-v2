@@ -3,8 +3,6 @@ package com.subrutin.catalog.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +14,7 @@ import com.subrutin.catalog.domain.Category;
 import com.subrutin.catalog.dto.CategoryCreateAndUpdateRequestDto;
 import com.subrutin.catalog.dto.CategoryListResponseDto;
 import com.subrutin.catalog.dto.ResultPageResponseDto;
+import com.subrutin.catalog.exception.BadRequestExcepton;
 import com.subrutin.catalog.repository.CategoryRepository;
 import com.subrutin.catalog.util.PaginationUtil;
 
@@ -55,6 +54,14 @@ public class CategoryServiceImpl implements CategoryService {
         }).collect(Collectors.toList());
         return PaginationUtil.createResultPageDto(dtos, pageResult.getTotalElements(), pageResult.getTotalPages());
 
+    }
+
+    @Override
+    public List<Category> findCategories(List<String> categoryCodeList) {
+        List<Category> categories = categoryRepository.findByCodeIn(categoryCodeList);
+        if (categories.isEmpty())
+            throw new BadRequestExcepton("Category cant emptey");
+        return categories;
     }
 
 }

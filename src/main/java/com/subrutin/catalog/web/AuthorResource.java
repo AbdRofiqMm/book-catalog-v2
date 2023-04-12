@@ -30,7 +30,7 @@ public class AuthorResource {
     private final AuthorService authorService;
 
     @GetMapping("/{id}/detail")
-    public ResponseEntity<AuthorResponseDto> findAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponseDto> findAuthorById(@PathVariable String id) {
         return ResponseEntity.ok().body(authorService.findAuthorById(id));
     }
 
@@ -41,13 +41,13 @@ public class AuthorResource {
     }
 
     @PutMapping("/{authorId}")
-    public ResponseEntity<Void> updateAuthor(@PathVariable Long authorId, @RequestBody AuthorUpdateRequestDto dto) {
+    public ResponseEntity<Void> updateAuthor(@PathVariable String authorId, @RequestBody AuthorUpdateRequestDto dto) {
         authorService.updateAuthor(authorId, dto);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{authorId}")
-    public ResponseEntity<Void> deleteAuthor(@PathVariable Long authorId) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable String authorId) {
         authorService.deleteAuthor(authorId);
         return ResponseEntity.ok().build();
     }
