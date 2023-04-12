@@ -3,12 +3,15 @@ package com.subrutin.catalog.web;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.subrutin.catalog.dto.BookCreateRequestDto;
+import com.subrutin.catalog.dto.BookDetailResponseDto;
 import com.subrutin.catalog.service.BookService;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +27,12 @@ public class BookResource {
     public ResponseEntity<Void> createBook(@RequestBody BookCreateRequestDto dto) {
         bookService.createNewBook(dto);
         return ResponseEntity.created(URI.create("/v1/book")).build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDetailResponseDto> findBookDetail(@PathVariable String id) {
+        BookDetailResponseDto result = bookService.findBookDetailById(id);
+        return ResponseEntity.ok(result);
     }
 
 }

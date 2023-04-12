@@ -18,4 +18,6 @@ public interface AuthorService {
     public void deleteAuthor(String auhotrId);
 
     public List<Author> findAuthors(List<String> authorIdList);
+
+    public List<AuthorResponseDto> constructDto(List<Author> author);
 }

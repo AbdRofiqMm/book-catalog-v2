@@ -13,9 +13,10 @@ import org.springframework.stereotype.Service;
 import com.subrutin.catalog.domain.Publisher;
 import com.subrutin.catalog.dto.PublisherCreateDto;
 import com.subrutin.catalog.dto.PublisherListResponseDto;
+import com.subrutin.catalog.dto.PublisherResponseDto;
 import com.subrutin.catalog.dto.PublisherUpdateDto;
 import com.subrutin.catalog.dto.ResultPageResponseDto;
-import com.subrutin.catalog.exception.BadRequestExcepton;
+import com.subrutin.catalog.exception.BadRequestException;
 import com.subrutin.catalog.repository.PublisherRepository;
 import com.subrutin.catalog.util.PaginationUtil;
 
@@ -39,7 +40,7 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public void updatePublisher(String publisherId, PublisherUpdateDto dto) {
         Publisher publisher = publisherRepository.findBySecureId(publisherId)
-                .orElseThrow(() -> new BadRequestExcepton("invalid.publisherId"));
+                .orElseThrow(() -> new BadRequestException("invalid.publisherId"));
         publisher.setName(dto.getPublisherName() == null || dto.getPublisherName().isBlank() ? publisher.getName()
                 : dto.getPublisherName());
         publisher.setCompanyName(
@@ -70,7 +71,15 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public Publisher findPublisher(String publisherId) {
         return publisherRepository.findBySecureId(publisherId)
-                .orElseThrow(() -> new BadRequestExcepton("invlid.publisherId"));
+                .orElseThrow(() -> new BadRequestException("invlid.publisherId"));
+    }
+
+    @Override
+    public PublisherResponseDto constructDto(Publisher publisher) {
+        PublisherResponseDto dto = new PublisherResponseDto();
+        dto.setPublisherId(publisher.getSecureId());
+        dto.setPublisherName(publisher.getName());
+        return dto;
     }
 
 }

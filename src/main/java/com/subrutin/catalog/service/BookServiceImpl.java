@@ -10,9 +10,9 @@ import com.subrutin.catalog.domain.Book;
 import com.subrutin.catalog.domain.Category;
 import com.subrutin.catalog.domain.Publisher;
 import com.subrutin.catalog.dto.BookCreateRequestDto;
-import com.subrutin.catalog.dto.BookDetailDto;
+import com.subrutin.catalog.dto.BookDetailResponseDto;
 import com.subrutin.catalog.dto.BookUpdateRequestDto;
-import com.subrutin.catalog.exception.BadRequestExcepton;
+import com.subrutin.catalog.exception.BadRequestException;
 import com.subrutin.catalog.repository.BookRepository;
 
 import lombok.AllArgsConstructor;
@@ -30,21 +30,24 @@ public class BookServiceImpl implements BookService {
     private final PublisherService publisherService;
 
     @Override
-    public BookDetailDto findBookDetailById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestExcepton("book_id.invalid"));
-        BookDetailDto dto = new BookDetailDto();
-        dto.setBookId(book.getId());
+    public BookDetailResponseDto findBookDetailById(String id) {
+        Book book = bookRepository.findBySecureId(id).orElseThrow(() -> new BadRequestException("book_id.invalid"));
+        BookDetailResponseDto dto = new BookDetailResponseDto();
+        dto.setBookId(book.getSecureId());
+        dto.setCategories(categoryService.constructDto(book.getCategories()));
+        dto.setAuthors(authorService.constructDto(book.getAuthors()));
+        dto.setPublisher(publisherService.constructDto(book.getPublisher()));
         dto.setBookTitle(book.getTitle());
         dto.setBookDescription(book.getDescription());
         return dto;
     }
 
     @Override
-    public List<BookDetailDto> findBookListDetail() {
+    public List<BookDetailResponseDto> findBookListDetail() {
         List<Book> books = bookRepository.findAll();
         return books.stream().map((b) -> {
-            BookDetailDto dto = new BookDetailDto();
-            dto.setBookId(b.getId());
+            BookDetailResponseDto dto = new BookDetailResponseDto();
+            dto.setBookId(b.getSecureId());
             dto.setBookTitle(b.getTitle());
             dto.setBookDescription(b.getDescription());
             return dto;
@@ -67,7 +70,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void updateBook(Long id, BookUpdateRequestDto dto) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestExcepton("boo_id.invalid"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BadRequestException("boo_id.invalid"));
         book.setTitle(dto.getBookTitle() == null ? book.getTitle() : dto.getBookTitle());
         book.setDescription(dto.getBookDescription() == null ? book.getDescription() : dto.getBookDescription());
         bookRepository.save(book);

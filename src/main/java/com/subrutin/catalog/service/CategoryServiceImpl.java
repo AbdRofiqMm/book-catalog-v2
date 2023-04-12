@@ -14,7 +14,7 @@ import com.subrutin.catalog.domain.Category;
 import com.subrutin.catalog.dto.CategoryCreateAndUpdateRequestDto;
 import com.subrutin.catalog.dto.CategoryListResponseDto;
 import com.subrutin.catalog.dto.ResultPageResponseDto;
-import com.subrutin.catalog.exception.BadRequestExcepton;
+import com.subrutin.catalog.exception.BadRequestException;
 import com.subrutin.catalog.repository.CategoryRepository;
 import com.subrutin.catalog.util.PaginationUtil;
 
@@ -60,8 +60,19 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> findCategories(List<String> categoryCodeList) {
         List<Category> categories = categoryRepository.findByCodeIn(categoryCodeList);
         if (categories.isEmpty())
-            throw new BadRequestExcepton("Category cant emptey");
+            throw new BadRequestException("Category cant emptey");
         return categories;
+    }
+
+    @Override
+    public List<CategoryListResponseDto> constructDto(List<Category> categories) {
+        return categories.stream().map((c) -> {
+            CategoryListResponseDto dto = new CategoryListResponseDto();
+            dto.setCode(c.getCode());
+            dto.setName(c.getName());
+            dto.setDescription(c.getDescription());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }

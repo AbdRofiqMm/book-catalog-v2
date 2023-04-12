@@ -10,7 +10,7 @@ import com.subrutin.catalog.domain.Author;
 import com.subrutin.catalog.dto.AuthorCreateRequestDto;
 import com.subrutin.catalog.dto.AuthorResponseDto;
 import com.subrutin.catalog.dto.AuthorUpdateRequestDto;
-import com.subrutin.catalog.exception.BadRequestExcepton;
+import com.subrutin.catalog.exception.BadRequestException;
 import com.subrutin.catalog.repository.AuthorRepository;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorResponseDto findAuthorById(String id) {
         Author author = authorRepository.findBySecureId(id)
-                .orElseThrow(() -> new BadRequestExcepton("invalid.authorId"));
+                .orElseThrow(() -> new BadRequestException("invalid.authorId"));
         AuthorResponseDto dto = new AuthorResponseDto();
         dto.setName(author.getName());
         dto.setBirthDate(author.getBirhtDate().toEpochDay());
@@ -45,7 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void updateAuthor(String authorId, AuthorUpdateRequestDto dto) {
         Author author = authorRepository.findBySecureId(authorId)
-                .orElseThrow(() -> new BadRequestExcepton("invalid.authorId"));
+                .orElseThrow(() -> new BadRequestException("invalid.authorId"));
         author.setName(dto.getAuthorName() == null ? author.getName() : dto.getAuthorName());
         author.setBirhtDate(
                 dto.getBirthDate() == null ? author.getBirhtDate() : LocalDate.ofEpochDay(dto.getBirthDate()));
@@ -55,7 +55,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void deleteAuthor(String auhotrId) {
         Author author = authorRepository.findBySecureId(auhotrId)
-                .orElseThrow(() -> new BadRequestExcepton("invlid.authorId"));
+                .orElseThrow(() -> new BadRequestException("invlid.authorId"));
         authorRepository.delete(author);
 
         // authorRepository.deleteById(auhotrId);
@@ -70,8 +70,18 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Author> findAuthors(List<String> authorIdList) {
         List<Author> authors = authorRepository.findBySecureIdIn(authorIdList);
         if (authors.isEmpty())
-            throw new BadRequestExcepton("Author cant empty");
+            throw new BadRequestException("Author cant empty");
         return authors;
+    }
+
+    @Override
+    public List<AuthorResponseDto> constructDto(List<Author> author) {
+        return author.stream().map((a) -> {
+            AuthorResponseDto dto = new AuthorResponseDto();
+            dto.setName(a.getName());
+            dto.setBirthDate(a.getBirhtDate().toEpochDay());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }

@@ -3,6 +3,7 @@ package com.subrutin.catalog.service;
 import com.subrutin.catalog.domain.Publisher;
 import com.subrutin.catalog.dto.PublisherCreateDto;
 import com.subrutin.catalog.dto.PublisherListResponseDto;
+import com.subrutin.catalog.dto.PublisherResponseDto;
 import com.subrutin.catalog.dto.PublisherUpdateDto;
 import com.subrutin.catalog.dto.ResultPageResponseDto;
 
@@ -16,4 +17,6 @@ public interface PublisherService {
             String sortBy, String direction, String publisherName);
 
     public Publisher findPublisher(String publisherId);
+
+    public PublisherResponseDto constructDto(Publisher publisher);
 }
