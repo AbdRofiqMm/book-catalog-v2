@@ -24,7 +24,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/author")
+@RequestMapping("/v1/author")
 public class AuthorResource {
 
     private final AuthorService authorService;

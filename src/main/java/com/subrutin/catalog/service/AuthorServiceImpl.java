@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.subrutin.catalog.domain.Address;
 import com.subrutin.catalog.domain.Author;
 import com.subrutin.catalog.dto.AuthorCreateRequestDto;
 import com.subrutin.catalog.dto.AuthorResponseDto;
@@ -21,6 +22,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
+    private final AddressService addressService;
+
     @Override
     public AuthorResponseDto findAuthorById(String id) {
         Author author = authorRepository.findBySecureId(id)
@@ -28,6 +31,7 @@ public class AuthorServiceImpl implements AuthorService {
         AuthorResponseDto dto = new AuthorResponseDto();
         dto.setName(author.getName());
         dto.setBirthDate(author.getBirhtDate().toEpochDay());
+        dto.setAddresses(addressService.constructDto(author.getAddresses()));
         return dto;
     }
 
@@ -37,6 +41,15 @@ public class AuthorServiceImpl implements AuthorService {
             Author author = new Author();
             author.setName(dto.getAuthorName());
             author.setBirhtDate(LocalDate.ofEpochDay(dto.getBirthDate()));
+            List<Address> addresses = dto.getAddresses().stream().map(a -> {
+                Address address = new Address();
+                address.setStreetName(a.getStreetName());
+                address.setCityName(a.getCityName());
+                address.setZipCode(a.getZipCode());
+                address.setAuthor(author);
+                return address;
+            }).collect(Collectors.toList());
+            author.setAddresses(addresses);
             return author;
         }).collect(Collectors.toList());
         authorRepository.saveAll(authors);
